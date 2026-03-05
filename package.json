@@ -1,0 +1,25 @@
+{
+  "name": "fractal",
+  "version": "1.0.0",
+  "description": "Fractal — recursive agentic task orchestrator",
+  "main": "dist/index.js",
+  "scripts": {
+    "server": "tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
+    "cli": "tsx src/index.ts",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@hono/node-server": "^1.19.11",
+    "@types/node": "^25.3.3",
+    "dotenv": "^17.3.1",
+    "hono": "^4.12.5",
+    "openai": "^6.25.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

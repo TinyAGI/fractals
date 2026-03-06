@@ -26,7 +26,7 @@ export async function classify(task: string, lineage: string[]): Promise<"atomic
 Decision heuristics:
 - If the task names a single feature, endpoint, component, or module: atomic.
 - If the task bundles unrelated concerns (e.g., "build auth and set up CI"): composite.
-- If you're at depth 2 or deeper in the hierarchy, it is almost certainly atomic — only mark composite if you can name 2+ truly independent deliverables.
+- If you're at depth 4 or deeper in the hierarchy, it is almost certainly atomic — only mark composite if you can name 2+ truly independent deliverables.
 - When in doubt, choose atomic. Over-decomposition creates more overhead than under-decomposition.
 
 You will receive the full task hierarchy. Use it to see what ancestors already scoped — do not re-decompose what's already been narrowed.`,

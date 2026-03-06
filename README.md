@@ -35,11 +35,11 @@
 │                                                         │
 │  ┌─────────┐   ┌──────────┐   ┌──────────────────────┐  │
 │  │  LLM    │   │Orchestr- │   │  Executor            │  │
-│  │classify │──>│  ator    │   │  Claude / Codex CLI  │  │
-│  │decompose│   │ plan()   │   │  git worktrees       │  │
+│  │classify │──>│  ator    │   │  Claude / Codex /    │  │
+│  │decompose│   │ plan()   │   │  OpenHands CLI       │  │
 │  └─────────┘   └──────────┘   └──────────────────────┘  │
 │                                                         │
-│  OpenAI (gpt-5.2)            Claude / Codex CLI (spawn) │
+│  OpenAI (gpt-5.2)        Claude / Codex / OpenHands CLI │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -57,9 +57,9 @@ User enters task                       User confirms plan
   └──composite──> decompose(task)      batch leaf tasks
                       │                        │
                  [children]                    v
-                      │                 claude --dangerously-skip-permissions
-                 plan(child) <────┐          -p "task + lineage context"
-                      │           │          (per worktree)
+                      │                 claude / codex / openhands CLI
+                 plan(child) <────┐          (per worktree)
+                      │           │
                       └───────────┘
 ```
 
@@ -69,7 +69,7 @@ User enters task                       User confirms plan
 2. **Decompose** -- server recursively breaks it into a tree
 3. **Review** -- inspect the full plan tree before committing
 4. **Workspace** -- provide a directory path (git-initialized automatically, defaults to `~/fractals/<task-slug>`)
-5. **Execute** -- leaf tasks run via Claude CLI in batches, status updates poll in real-time
+5. **Execute** -- leaf tasks run via Claude CLI, Codex CLI, or OpenHands CLI in batches, status updates poll in real-time
 
 ## Batch Strategies
 
@@ -86,10 +86,10 @@ Due to rate limits, leaf tasks execute in batches rather than all at once.
 ```
 src/
   server.ts        Hono API server (:1618)
-  types.ts         Shared types (Task, Session, BatchStrategy)
+  types.ts         Shared types (Task, Session, BatchStrategy, ExecutorProvider)
   llm.ts           OpenAI calls: classify + decompose (structured output)
   orchestrator.ts  Recursive plan() -- builds the tree, no execution
-  executor.ts      Claude CLI invocation per task in git worktree
+  executor.ts      Claude / Codex / OpenHands CLI invocation per task in git worktree
   workspace.ts     git init + worktree management
   batch.ts         Batch execution strategies
   index.ts         CLI entry point (standalone, no server)
@@ -145,8 +145,8 @@ Port `1618` — the golden ratio, the constant behind fractal geometry.
 ## Roadmap
 
 **Executor**
-- [ ] OpenCode CLI as a third executor option
-- [ ] Per-task executor override (mix Claude and Codex in one plan)
+- [x] OpenHands CLI as a third executor option
+- [ ] Per-task executor override (mix Claude, Codex and OpenHands in one plan)
 - [ ] Merge worktree branches back to main after completion
 
 **Backpropagation (merge agent)**

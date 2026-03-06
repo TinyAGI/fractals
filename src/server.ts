@@ -69,7 +69,7 @@ app.post("/api/execute", async (c) => {
   if (strategy === "depth-first" || strategy === "breadth-first" || strategy === "layer-sequential") {
     session.batchStrategy = strategy;
   }
-  if (executor === "claude" || executor === "codex") {
+  if (executor === "claude" || executor === "codex" || executor === "openhands") {
     session.executor = executor;
   }
 

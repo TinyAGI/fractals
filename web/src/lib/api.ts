@@ -18,7 +18,7 @@ export interface Session {
   tree: Task | null;
   workspace: string | null;
   batchStrategy: string;
-  executor: "claude" | "codex";
+  executor: "claude" | "codex" | "openhands";
   phase: "idle" | "decomposing" | "planning" | "executing" | "done";
 }
 

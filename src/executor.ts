@@ -13,6 +13,7 @@ function resolveBin(name: string): string {
 
 const CLAUDE_BIN = resolveBin("claude");
 const CODEX_BIN = resolveBin("codex");
+const OPENHANDS_BIN = resolveBin("openhands");
 
 function runCommand(command: string, args: string[], cwd: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -77,6 +78,14 @@ function invokeCodex(message: string, cwd: string): Promise<string> {
   });
 }
 
+function invokeOpenHands(message: string, cwd: string): Promise<string> {
+  return runCommand(
+    OPENHANDS_BIN,
+    ["--headless", "--always-approve", "-t", message],
+    cwd
+  );
+}
+
 function buildPrompt(task: Task): string {
   const hierarchy = formatLineage(task.lineage, task.description);
   const siblingContext = task.lineage.length > 0
@@ -112,7 +121,14 @@ export async function executeTask(
 
   const prompt = buildPrompt(task);
 
-  const invoke = provider === "codex" ? invokeCodex : invokeClaude;
+  let invoke: (message: string, cwd: string) => Promise<string>;
+  if (provider === "codex") {
+    invoke = invokeCodex;
+  } else if (provider === "openhands") {
+    invoke = invokeOpenHands;
+  } else {
+    invoke = invokeClaude;
+  }
   const result = await invoke(prompt, worktreePath);
   console.log(`[execute] [${task.id}] done`);
   return result;

@@ -1,6 +1,6 @@
 export type TaskKind = "atomic" | "composite";
 export type TaskStatus = "pending" | "decomposing" | "ready" | "running" | "done" | "failed";
-export type ExecutorProvider = "claude" | "codex";
+export type ExecutorProvider = "claude" | "codex" | "openhands";
 
 export interface Task {
   id: string;           // hierarchical: "1", "1.2", "1.2.3"

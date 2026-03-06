@@ -31,7 +31,7 @@ export default function Home() {
   const [maxDepth, setMaxDepth] = useState(3);
   const [tree, setTree] = useState<Task | null>(null);
   const [workspace, setWorkspace] = useState("");
-  const [executor, setExecutor] = useState<"claude" | "codex">("claude");
+  const [executor, setExecutor] = useState<"claude" | "codex" | "openhands">("claude");
   const [batches, setBatches] = useState<string[][]>([]);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -182,6 +182,13 @@ export default function Home() {
                     onClick={() => setExecutor("codex")}
                   >
                     Codex
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={executor === "openhands" ? "default" : "outline"}
+                    onClick={() => setExecutor("openhands")}
+                  >
+                    OpenHands
                   </Button>
                 </div>
                 <div className="flex-1" />

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fractals Pixel Office Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Fractals Pixel Office Demo</p>
+          <h1>用模拟用户输入触发多 Agent 办公室动画</h1>
+          <p class="lede">
+            不接后端。输入一个任务，Orchestrator 会先拆树，再把叶子任务分配给不同 worktree desk。
+          </p>
+        </div>
+        <form id="control-form" class="control-panel">
+          <label class="control-label" for="task-input">用户任务</label>
+          <textarea id="task-input" rows="3">为 Fractals 设计一个像素风虚拟办公室 UI，展示任务拆解、worktree 分配、Agent 执行与报错恢复。</textarea>
+          <div class="button-row">
+            <button type="submit" class="primary">启动编排</button>
+            <button type="button" id="random-btn" class="ghost">随机任务</button>
+            <button type="button" id="error-btn" class="ghost">触发报错波次</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="demo-grid">
+        <div class="stage-card">
+          <div class="card-head">
+            <span>Pixel Office</span>
+            <span id="phase-pill" class="pill">Idle</span>
+          </div>
+          <canvas id="office-canvas" width="1280" height="760"></canvas>
+        </div>
+
+        <aside class="rail">
+          <section class="info-card">
+            <h2>状态机</h2>
+            <p id="state-summary">等待输入。</p>
+          </section>
+          <section class="info-card">
+            <h2>Task Tree</h2>
+            <div id="task-tree" class="tree"></div>
+          </section>
+          <section class="info-card">
+            <h2>事件流</h2>
+            <div id="event-log" class="event-log"></div>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+  </html>

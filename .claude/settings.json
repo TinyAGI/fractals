@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone https://github.com/TinyAGI/fractals /home/cheng/projects/Fractals)",
+      "Bash(git init)",
+      "Bash(git remote add origin https://github.com/TinyAGI/fractals)",
+      "Bash(git fetch origin)",
+      "Bash(git checkout -b main origin/main)",
+      "Read(//home/cheng/fractals/please-create-a-landing-page-for-fractal/**)",
+      "Bash(git -C ~/fractals/please-create-a-landing-page-for-fractal branch -a)",
+      "Bash(git -C ~/fractals/please-create-a-landing-page-for-fractal show task/1 --stat)",
+      "Bash(git -C ~/fractals/please-create-a-landing-page-for-fractal log --all --oneline)",
+      "Bash(claude --dangerously-skip-permissions -p \"Create a file called hello.txt with the content ''Hello World'', then commit it with git.\")",
+      "Read(//tmp/**)",
+      "Bash(mkdir test-claude)",
+      "Bash(claude --dangerously-skip-permissions -p \"Create a file called hello.txt with the content ''Hello World''\")",
+      "Read(//home/cheng/fractals/build-a-landing-page-for-fractals-with-1/.worktrees/**)",
+      "Bash(mkdir -p ~/fractals/landing-page-merged)",
+      "Bash(cp ~/fractals/build-a-landing-page-for-fractals-with-1/.worktrees/1.1/index.html ~/fractals/landing-page-merged/)",
+      "Bash(cp ~/fractals/build-a-landing-page-for-fractals-with-1/.worktrees/1.2/styles.css ~/fractals/landing-page-merged/)",
+      "Bash(cp -r ~/fractals/build-a-landing-page-for-fractals-with-1/.worktrees/1.3/js ~/fractals/landing-page-merged/)",
+      "Read(//home/cheng/fractals/landing-page-merged/**)"
+    ]
+  }
+}

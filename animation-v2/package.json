@@ -1,0 +1,23 @@
+{
+  "name": "animation-v2",
+  "version": "1.0.0",
+  "description": "Fractals pixel office animation v2",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "remotion studio --port 3003 src/index.ts",
+    "render": "remotion render src/index.ts PixelOffice out/pixel-office.mp4"
+  },
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@remotion/cli": "^4.0.434",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "remotion": "^4.0.434"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  }
+}

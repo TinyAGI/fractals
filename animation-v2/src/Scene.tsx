@@ -3,8 +3,8 @@
  * 包含：地板、Orchestrator 指挥台、Worktree 工位、休息区
  */
 
-import { interpolate } from "remotion";
-import { COLORS, LAYOUT } from "./types";
+import { interpolate, spring } from "remotion";
+import { COLORS, LAYOUT, FPS, TIMELINE } from "./types";
 
 const C = COLORS;
 const L = LAYOUT;
@@ -333,6 +333,219 @@ export function Lounge() {
       {/* 植物角落 */}
       <PixelPlant x={x + w - 20} y={y + h - 15} />
       <PixelPlant x={x + 20} y={y + h - 15} />
+    </g>
+  );
+}
+
+// ─── 递归任务树面板 ──────────────────────────────────────────────────────────────
+//
+// 在 decomposing 阶段逐步"生长"出任务树，展示递归分解过程。
+// 位置：屏幕右侧空白区域 (x: 780–1100, y: 30–270)
+//
+// 时序（相对 orchDecompose=1.5s）：
+//   +0.0s  面板出现
+//   +0.4s  根节点 "Build Landing Page" 弹出
+//   +0.9s  连线延伸到第一个中间节点（composite）
+//   +1.1s  中间节点 "UI Layer" 出现，屏幕上显示 classify → composite
+//   +1.5s  连线继续，叶节点 "HTML structure" 出现（atomic）
+//   +1.9s  叶节点 "CSS styling" 出现
+//   +2.3s  中间节点 "Logic Layer" 出现
+//   +2.7s  叶节点 "JS animation" 出现
+//   +3.0s  所有叶节点高亮，扫描线停止
+
+const TL = TIMELINE;
+const f = (s: number) => Math.round(s * FPS);
+
+export function TaskTreePanel({
+  frame,
+  phase,
+}: {
+  frame: number;
+  phase: "idle" | "decomposing" | "dispatching" | "done";
+}) {
+  if (phase === "idle") return null;
+
+  // panel fade-in at orchDecompose
+  const panelOpacity = interpolate(
+    spring({ frame: frame - f(TL.orchDecompose), fps: FPS, config: { damping: 20 } }),
+    [0, 1], [0, 1], { extrapolateRight: "clamp" }
+  );
+
+  // 各节点出现时间（相对 orchDecompose）
+  const t0 = TL.orchDecompose;
+  const nodeAppear = (offsetS: number) =>
+    interpolate(
+      spring({ frame: frame - f(t0 + offsetS), fps: FPS, config: { damping: 16, stiffness: 120 } }),
+      [0, 1], [0, 1], { extrapolateRight: "clamp" }
+    );
+
+  // 连线生长：用 scaleX 从0→1
+  const lineGrow = (offsetS: number) =>
+    interpolate(
+      spring({ frame: frame - f(t0 + offsetS), fps: FPS, config: { damping: 18, stiffness: 100 } }),
+      [0, 1], [0, 1], { extrapolateRight: "clamp" }
+    );
+
+  const rootOp    = nodeAppear(0.4);
+  const line1Op   = lineGrow(0.8);
+  const mid1Op    = nodeAppear(1.0);
+  const line2Op   = lineGrow(1.3);
+  const leaf1Op   = nodeAppear(1.5);
+  const line3Op   = lineGrow(1.8);
+  const leaf2Op   = nodeAppear(2.0);
+  const line4Op   = lineGrow(2.2);
+  const mid2Op    = nodeAppear(2.4);
+  const line5Op   = lineGrow(2.7);
+  const leaf3Op   = nodeAppear(2.9);
+
+  const allDone   = leaf3Op > 0.95;
+  const isActive  = phase === "decomposing";
+
+  // Panel bounds — tall vertical strip on the right
+  // Left-to-right layout: root | mid layer | leaf layer
+  const PX = 620, PY = 10;
+  const PW = 460, PH = 282;
+
+  // Column X positions (left→right = root→mid→leaf)
+  const colRoot = PX + 60;
+  const colMid  = PX + 190;
+  const colLeaf = PX + 370;
+
+  // Row Y positions — leaves stacked vertically, mids centered on their children
+  const nodeH = 26;
+  const nodeGap = 16;
+  // Leaf rows (3 leaves stacked): centered in panel
+  const leafTotalH = 3 * nodeH + 2 * nodeGap;
+  const leafStartY = PY + (PH - leafTotalH) / 2 + nodeH / 2;
+  const leaf1Y = leafStartY;
+  const leaf2Y = leafStartY + nodeH + nodeGap;
+  const leaf3Y = leafStartY + 2 * (nodeH + nodeGap);
+
+  // Mid nodes: mid1 owns leaf1+leaf2, mid2 owns leaf3
+  const mid1Y = (leaf1Y + leaf2Y) / 2;
+  const mid2Y = leaf3Y;
+  // Root: center of all mids
+  const rootY = (mid1Y + mid2Y) / 2;
+
+  const LEAF_COLORS = [C.agentColors[0], C.agentColors[1], C.agentColors[2]];
+  const MID_COLOR = "#a78bfa";
+
+  // Scan line — now horizontal sweep from left to right
+  const scanX = isActive ? PX + 8 + ((frame * 2.5) % (PW - 12)) : 0;
+
+  function Node({
+    x, y, label, color, opacity, isLeaf,
+  }: {
+    x: number; y: number; label: string; color: string;
+    opacity: number; isLeaf: boolean; isDone: boolean;
+  }) {
+    const w = isLeaf ? 90 : 110;
+    const h = nodeH;
+    return (
+      <g transform={`translate(${x},${y}) scale(${opacity}) translate(${-x},${-y})`} opacity={opacity}>
+        <rect x={x - w / 2} y={y - h / 2} width={w} height={h}
+          fill="#1f2335" rx={4} stroke={color} strokeWidth={1.5} />
+        <text x={x} y={y + 4} textAnchor="middle"
+          fontSize={isLeaf ? 8 : 9} fill={color}
+          fontFamily="monospace" fontWeight={isLeaf ? 700 : 500}>
+          {label}
+        </text>
+      </g>
+    );
+  }
+
+  function Line({ x1, y1, x2, y2, progress, color }: {
+    x1: number; y1: number; x2: number; y2: number;
+    progress: number; color: string;
+  }) {
+    // Draw line from (x1,y1) toward (x2,y2) scaled by progress
+    const ex = x1 + (x2 - x1) * progress;
+    const ey = y1 + (y2 - y1) * progress;
+    return (
+      <line x1={x1} y1={y1} x2={ex} y2={ey}
+        stroke={color} strokeWidth={1.5} opacity={0.6} strokeDasharray="3 2" />
+    );
+  }
+
+  // Node half-widths for line attachment
+  const rootHW = 55;  // half of root node width (110)
+  const midHW  = 55;
+  const leafHW = 45;  // half of leaf node width (90)
+
+  return (
+    <g opacity={panelOpacity}>
+      {/* Panel background — purple theme */}
+      <rect x={PX} y={PY} width={PW} height={PH}
+        fill="#0e0b1a" rx={8}
+        stroke={isActive ? "#7c3aed" : "#3b1f6e"}
+        strokeWidth={isActive ? 1.5 : 1}
+      />
+      {/* Glow when active */}
+      {isActive && (
+        <rect x={PX} y={PY} width={PW} height={PH} rx={8}
+          fill="none" stroke="#a78bfa" strokeWidth={1}
+          opacity={0.15 + Math.sin(frame / 30 * Math.PI * 2) * 0.1}
+        />
+      )}
+      {/* Scan line — vertical bar sweeping left→right */}
+      {isActive && (
+        <rect x={scanX} y={PY + 1} width={2} height={PH - 2}
+          fill="#a78bfa" opacity={0.15} rx={1} />
+      )}
+
+      {/* Panel title */}
+      <text x={PX + PW / 2} y={PY + 16} textAnchor="middle"
+        fontSize={10} fill="#6d4fa8" fontFamily="monospace" letterSpacing={1}>
+        TASK DECOMPOSITION
+      </text>
+      <line x1={PX + 20} y1={PY + 22} x2={PX + PW - 20} y2={PY + 22}
+        stroke="#3b1f6e" strokeWidth={1} />
+
+      {/* Root node */}
+      <Node x={colRoot} y={rootY} label="Build Landing Page"
+        color="#c0caf5" opacity={rootOp} isLeaf={false} isDone={allDone} />
+
+      {/* Root → mid1 */}
+      <Line x1={colRoot + rootHW} y1={rootY} x2={colMid - midHW} y2={mid1Y}
+        progress={line1Op} color="#5b3a8a" />
+      {/* Root → mid2 */}
+      <Line x1={colRoot + rootHW} y1={rootY} x2={colMid - midHW} y2={mid2Y}
+        progress={line4Op} color="#5b3a8a" />
+
+      {/* Mid node 1 */}
+      <Node x={colMid} y={mid1Y} label="UI Layer"
+        color={MID_COLOR} opacity={mid1Op} isLeaf={false} isDone={allDone} />
+
+      {/* Mid1 → leaf1 */}
+      <Line x1={colMid + midHW} y1={mid1Y} x2={colLeaf - leafHW} y2={leaf1Y}
+        progress={line2Op} color="#5b3a8a" />
+      {/* Mid1 → leaf2 */}
+      <Line x1={colMid + midHW} y1={mid1Y} x2={colLeaf - leafHW} y2={leaf2Y}
+        progress={line3Op} color="#5b3a8a" />
+
+      {/* Mid node 2 */}
+      <Node x={colMid} y={mid2Y} label="Logic Layer"
+        color={MID_COLOR} opacity={mid2Op} isLeaf={false} isDone={allDone} />
+
+      {/* Mid2 → leaf3 */}
+      <Line x1={colMid + midHW} y1={mid2Y} x2={colLeaf - leafHW} y2={leaf3Y}
+        progress={line5Op} color="#5b3a8a" />
+
+      {/* Leaf nodes — stacked vertically */}
+      <Node x={colLeaf} y={leaf1Y} label="HTML struct"
+        color={LEAF_COLORS[0]} opacity={leaf1Op} isLeaf isDone={allDone} />
+      <Node x={colLeaf} y={leaf2Y} label="CSS styling"
+        color={LEAF_COLORS[1]} opacity={leaf2Op} isLeaf isDone={allDone} />
+      <Node x={colLeaf} y={leaf3Y} label="JS animation"
+        color={LEAF_COLORS[2]} opacity={leaf3Op} isLeaf isDone={allDone} />
+
+      {/* All-done indicator */}
+      {allDone && (
+        <text x={PX + PW / 2} y={PY + PH - 8} textAnchor="middle"
+          fontSize={9} fill="#4ade80" fontFamily="monospace">
+          ✓ decomposition complete — 3 leaf tasks
+        </text>
+      )}
     </g>
   );
 }

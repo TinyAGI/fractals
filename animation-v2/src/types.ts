@@ -67,7 +67,7 @@ export const LAYOUT = {
   W: 1280,
   H: 720,
   // Orchestrator area (top-center)
-  ORCH_X: 540,
+  ORCH_X: 380,
   ORCH_Y: 150,
   ORCH_DESK_W: 200,
   ORCH_DESK_H: 80,

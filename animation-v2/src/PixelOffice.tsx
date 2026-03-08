@@ -31,6 +31,7 @@ import {
   OrchestratorDesk,
   WorktreeDesk,
   WorktreeDeskLabel,
+  TaskTreePanel,
   Lounge,
   SceneTitle,
   StatusBar,
@@ -271,13 +272,16 @@ export const PixelOffice = () => {
           <OrchestratorDesk phase={orchPhase} frame={frame} />
         </g>
 
+        {/* ── 递归任务树（右侧空白区域） */}
+        <TaskTreePanel frame={frame} phase={orchPhase} />
+
         {/* ── Orchestrator 小人 */}
         <g opacity={orchOpacity}>
           <PixelChar
             x={L.ORCH_X + L.ORCH_DESK_W / 2}
             y={L.ORCH_Y - 10}
             color={"#7c3aed"}
-            anim={orchPhase === "decomposing" || orchPhase === "dispatching" ? "type" : "idle"}
+            anim={orchPhase === "decomposing" ? "type" : "idle"}
             frame={frame}
             size={1.25}
           />
@@ -348,7 +352,7 @@ export const PixelOffice = () => {
       {/* ── 状态栏（HTML 层，方便文字渲染） */}
       <div style={{
         position: "absolute",
-        top: 262,
+        top: 310,
         left: "50%",
         transform: "translateX(-50%)",
         background: C.cardBg,

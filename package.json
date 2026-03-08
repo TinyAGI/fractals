@@ -16,7 +16,7 @@
   "dependencies": {
     "@hono/node-server": "^1.19.11",
     "@types/node": "^25.3.3",
-    "dotenv": "^17.3.1",
+    "dotenv": "^16.4.5",
     "hono": "^4.12.5",
     "openai": "^6.25.0",
     "tsx": "^4.21.0",

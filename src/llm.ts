@@ -4,7 +4,7 @@ import { z } from "zod";
 import { formatLineage } from "./lineage.js";
 
 const client = new OpenAI();
-const MODEL = "gpt-5.4";
+const MODEL = "gpt-4o";
 
 const ClassifySchema = z.object({
   kind: z.enum(["atomic", "composite"]),

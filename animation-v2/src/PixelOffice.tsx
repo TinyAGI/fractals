@@ -174,7 +174,7 @@ function TaskCard({
         stroke={color} strokeWidth={1.5}
       />
       <text x={0} y={5} textAnchor="middle"
-        fontSize={11} fill={color} fontFamily="monospace" fontWeight={700}>
+        fontSize={17} fill={color} fontFamily="monospace" fontWeight={700}>
         {label}
       </text>
     </g>
@@ -360,7 +360,7 @@ export const PixelOffice = () => {
         borderRadius: 8,
         padding: "6px 16px",
         fontFamily: "monospace",
-        fontSize: 12,
+        fontSize: 18,
         color: C.text,
         opacity: titleOpacity,
         whiteSpace: "nowrap",

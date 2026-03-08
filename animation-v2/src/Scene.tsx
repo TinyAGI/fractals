@@ -93,7 +93,7 @@ export function OrchestratorDesk({
         fill={C.deskTop} />
 
       {/* 显示器 */}
-      <rect x={x + dw / 2 - 36} y={y + 14} width={72} height={44}
+      <rect x={x + dw / 2 - 52} y={y + 14} width={104} height={52}
         fill={screenColor} rx={4}
         stroke="#3d59a1" strokeWidth={1}
       />
@@ -101,18 +101,18 @@ export function OrchestratorDesk({
       {phase === "decomposing" && (
         <>
           <text x={x + dw / 2} y={y + 32} textAnchor="middle"
-            fontSize={8} fill="#4a9eff" fontFamily="monospace">
+            fontSize={12} fill="#4a9eff" fontFamily="monospace">
             decomposing...
           </text>
-          <text x={x + dw / 2} y={y + 44} textAnchor="middle"
-            fontSize={7} fill="#565f89" fontFamily="monospace">
+          <text x={x + dw / 2} y={y + 46} textAnchor="middle"
+            fontSize={11} fill="#565f89" fontFamily="monospace">
             {`depth: ${Math.floor(t % 4) + 1}/4`}
           </text>
         </>
       )}
       {(phase === "dispatching" || phase === "done") && (
         <text x={x + dw / 2} y={y + 38} textAnchor="middle"
-          fontSize={9} fill="#4ade80" fontFamily="monospace">
+          fontSize={14} fill="#4ade80" fontFamily="monospace">
           ✓ complete
         </text>
       )}
@@ -126,8 +126,8 @@ export function OrchestratorDesk({
       ))}
 
       {/* 标签 */}
-      <text x={x + dw / 2} y={y + dh + 16} textAnchor="middle"
-        fontSize={12} fill={C.text} fontFamily="monospace" fontWeight={700}>
+      <text x={x + dw / 2} y={y + dh + 18} textAnchor="middle"
+        fontSize={18} fill={C.text} fontFamily="monospace" fontWeight={700}>
         orchestrator
       </text>
 
@@ -225,14 +225,14 @@ export function WorktreeDesk({
         </>
       )}
       {isDone && (
-        <text x={x + dw / 2} y={y + 46} textAnchor="middle"
-          fontSize={16} fill="#4ade80" fontFamily="monospace">
+        <text x={x + dw / 2} y={y + 50} textAnchor="middle"
+          fontSize={24} fill="#4ade80" fontFamily="monospace">
           ✓
         </text>
       )}
       {isError && (
-        <text x={x + dw / 2} y={y + 46} textAnchor="middle"
-          fontSize={16} fill="#f7768e" fontFamily="monospace">
+        <text x={x + dw / 2} y={y + 50} textAnchor="middle"
+          fontSize={24} fill="#f7768e" fontFamily="monospace">
           ✗
         </text>
       )}
@@ -249,10 +249,10 @@ export function WorktreeDesk({
       ))}
 
       {/* 工位标签 */}
-      <rect x={x + 4} y={y + dh - 18} width={dw - 8} height={16}
+      <rect x={x + 4} y={y + dh - 22} width={dw - 8} height={20}
         fill="#0d1117" rx={3} opacity={0.7} />
-      <text x={x + dw / 2} y={y + dh - 7} textAnchor="middle"
-        fontSize={9} fill={borderColor} fontFamily="monospace">
+      <text x={x + dw / 2} y={y + dh - 6} textAnchor="middle"
+        fontSize={14} fill={borderColor} fontFamily="monospace">
         {`worktree/${index + 1}`}
       </text>
 
@@ -275,8 +275,8 @@ export function WorktreeDeskLabel({
   const dw = L.DESK_W;
   const dh = L.DESK_H;
   return (
-    <text x={x + dw / 2} y={L.DESK_Y + dh + 18} textAnchor="middle"
-      fontSize={11} fill={C.text}
+    <text x={x + dw / 2} y={L.DESK_Y + dh + 22} textAnchor="middle"
+      fontSize={17} fill={C.text}
       fontFamily="monospace" fontWeight={600}
     >
       {taskDesc.length > 22 ? taskDesc.slice(0, 22) + "…" : taskDesc}
@@ -304,7 +304,7 @@ export function Lounge() {
       <rect x={x + w / 2 - 32} y={y - 12} width={64} height={18}
         fill={C.cardBg} rx={4} stroke={C.loungeAccent} strokeWidth={1} />
       <text x={x + w / 2} y={y + 1} textAnchor="middle"
-        fontSize={10} fill={C.textMuted} fontFamily="monospace">
+        fontSize={15} fill={C.textMuted} fontFamily="monospace">
         LOUNGE
       </text>
 
@@ -403,13 +403,13 @@ export function TaskTreePanel({
 
   // Panel bounds — tall vertical strip on the right
   // Left-to-right layout: root | mid layer | leaf layer
-  const PX = 620, PY = 10;
-  const PW = 460, PH = 282;
+  const PX = 600, PY = 10;
+  const PW = 490, PH = 282;
 
   // Column X positions (left→right = root→mid→leaf)
-  const colRoot = PX + 60;
-  const colMid  = PX + 190;
-  const colLeaf = PX + 370;
+  const colRoot = PX + 80;
+  const colMid  = PX + 240;
+  const colLeaf = PX + 400;
 
   // Row Y positions — leaves stacked vertically, mids centered on their children
   const nodeH = 26;
@@ -439,14 +439,14 @@ export function TaskTreePanel({
     x: number; y: number; label: string; color: string;
     opacity: number; isLeaf: boolean; isDone: boolean;
   }) {
-    const w = isLeaf ? 90 : 110;
+    const w = isLeaf ? 130 : 150;
     const h = nodeH;
     return (
       <g transform={`translate(${x},${y}) scale(${opacity}) translate(${-x},${-y})`} opacity={opacity}>
         <rect x={x - w / 2} y={y - h / 2} width={w} height={h}
           fill="#1f2335" rx={4} stroke={color} strokeWidth={1.5} />
-        <text x={x} y={y + 4} textAnchor="middle"
-          fontSize={isLeaf ? 8 : 9} fill={color}
+        <text x={x} y={y + 5} textAnchor="middle"
+          fontSize={isLeaf ? 12 : 14} fill={color}
           fontFamily="monospace" fontWeight={isLeaf ? 700 : 500}>
           {label}
         </text>
@@ -468,9 +468,9 @@ export function TaskTreePanel({
   }
 
   // Node half-widths for line attachment
-  const rootHW = 55;  // half of root node width (110)
-  const midHW  = 55;
-  const leafHW = 45;  // half of leaf node width (90)
+  const rootHW = 75;  // half of root node width (150)
+  const midHW  = 75;
+  const leafHW = 65;  // half of leaf node width (130)
 
   return (
     <g opacity={panelOpacity}>
@@ -494,8 +494,8 @@ export function TaskTreePanel({
       )}
 
       {/* Panel title */}
-      <text x={PX + PW / 2} y={PY + 16} textAnchor="middle"
-        fontSize={10} fill="#6d4fa8" fontFamily="monospace" letterSpacing={1}>
+      <text x={PX + PW / 2} y={PY + 18} textAnchor="middle"
+        fontSize={15} fill="#6d4fa8" fontFamily="monospace" letterSpacing={1}>
         TASK DECOMPOSITION
       </text>
       <line x1={PX + 20} y1={PY + 22} x2={PX + PW - 20} y2={PY + 22}
@@ -542,7 +542,7 @@ export function TaskTreePanel({
       {/* All-done indicator */}
       {allDone && (
         <text x={PX + PW / 2} y={PY + PH - 8} textAnchor="middle"
-          fontSize={9} fill="#4ade80" fontFamily="monospace">
+          fontSize={14} fill="#4ade80" fontFamily="monospace">
           ✓ decomposition complete — 3 leaf tasks
         </text>
       )}
@@ -585,16 +585,16 @@ export function StatusBar({ label, opacity }: { label: string; opacity: number }
 export function DoneBanner({ opacity }: { opacity: number }) {
   return (
     <g opacity={opacity}>
-      <rect x={L.W - 280} y={40} width={240} height={50}
+      <rect x={L.W - 310} y={35} width={280} height={62}
         fill="#0d2b1a" rx={10}
         stroke="#4ade80" strokeWidth={2}
       />
-      <text x={L.W - 160} y={60} textAnchor="middle"
-        fontSize={14} fill="#4ade80" fontFamily="monospace" fontWeight={700}>
+      <text x={L.W - 170} y={60} textAnchor="middle"
+        fontSize={21} fill="#4ade80" fontFamily="monospace" fontWeight={700}>
         ✓ execution complete
       </text>
-      <text x={L.W - 160} y={78} textAnchor="middle"
-        fontSize={11} fill="#565f89" fontFamily="monospace">
+      <text x={L.W - 170} y={84} textAnchor="middle"
+        fontSize={17} fill="#565f89" fontFamily="monospace">
         3 commits · 3 worktrees
       </text>
     </g>
